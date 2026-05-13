@@ -27,9 +27,36 @@
         }
     };
 
-    // FIX: Look at the main browser URL, not just the iframe URL
-    const searchParams = new URLSearchParams(window.location.search) || new URLSearchParams(window.top.location.search);
-    let fileId = searchParams.get('id');
+    function getFileId() {
+        // Tier 1: Check the iframe's own URL
+        let params = new URLSearchParams(window.location.search);
+        let id = params.get('id');
+        if (id) return id;
+
+        // Tier 2: Check the main browser URL (GoDaddy wrapper)
+        try {
+            params = new URLSearchParams(window.top.location.search);
+            id = params.get('id');
+            if (id) return id;
+        } catch (e) {
+            console.warn("Cross-origin restriction: Cannot access top window URL.");
+        }
+
+        // Tier 3: Check the referrer (useful if redirected)
+        try {
+            if (document.referrer) {
+                const refUrl = new URL(document.referrer);
+                id = new URLSearchParams(refUrl.search).get('id');
+                if (id) return id;
+            }
+        } catch (e) {
+            // Referrer not available or not a valid URL
+        }
+
+        return null;
+    }
+
+    let fileId = getFileId();
 
     // DEBUG: Uncomment the line below if it still shows error to see what ID is being read
     // alert("Detected ID: " + fileId); 
@@ -41,7 +68,14 @@
     const data = fileDatabase[fileId];
 
     if (data) {
-        document.getElementById('dynamic-title').innerText = "Your " + data.title + " is Ready!";
+        const fullTitle = "Download: " + data.title;
+        document.title = fullTitle; // Update iframe title
+        try {
+            window.top.document.title = fullTitle; // Attempt to update main tab title
+        } catch (e) {
+            // Likely blocked by cross-origin security
+        }
+        document.getElementById('dynamic-title').innerText = "Preparing your " + data.title + "...";
 
         let timeLeft = 10;
         const timer = setInterval(() => {
@@ -49,6 +83,8 @@
             document.getElementById('seconds').innerText = timeLeft;
             if (timeLeft <= 0) {
                 clearInterval(timer);
+                document.getElementById('dynamic-title').innerText = "Your " + data.title + " is Ready!";
+                document.getElementById('dynamic-sub').style.display = 'none'; // Hide verification text
                 document.getElementById('countdown').style.display = 'none';
                 document.getElementById('final-trigger').style.display = 'inline-block';
             }
