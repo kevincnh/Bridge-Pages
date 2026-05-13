@@ -1,5 +1,5 @@
 <div
-    style="text-align: center; padding: 50px; font-family: sans-serif; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    style="text-align: center; padding: 100px 50px 50px 50px; font-family: sans-serif; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
     <h2 id="dynamic-title">Preparing your download...</h2>
     <p id="dynamic-sub">Your file will be ready after a brief verification.</p>
 
@@ -10,6 +10,30 @@
 
     <div id="countdown" style="font-size: 24px; font-weight: bold; color: #e74c3c;">
         Link ready in <span id="seconds">10</span>s...
+    </div>
+
+    <!-- Ad Banner Section -->
+    <div id="ad-container" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+        <p style="font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">
+            Sponsored Content</p>
+
+        <!-- PASTE YOUR ADSTERRA BANNER CODE BELOW THIS LINE -->
+        <div id="adsterra-banner-slot"
+            style="min-height: 250px; display: flex; align-items: center; justify-content: center;">
+            <script type="text/javascript">
+                atOptions = {
+                    'key': '3d1c1f9e7c2eaa2376d0e9f50f0669d8',
+                    'format': 'iframe',
+                    'height': 250,
+                    'width': 300,
+                    'params': {}
+                };
+            </script>
+            <script type="text/javascript"
+                src="https://www.highperformanceformat.com/3d1c1f9e7c2eaa2376d0e9f50f0669d8/invoke.js"></script>
+        </div>
+        <!-- PASTE YOUR ADSTERRA BANNER CODE ABOVE THIS LINE -->
+
     </div>
 </div>
 
@@ -91,10 +115,16 @@
         }, 1000);
 
         document.getElementById('final-trigger').addEventListener('click', function () {
-            window.open(data.adUrl, '_blank');
-            setTimeout(() => {
-                window.location.href = data.fileUrl;
-            }, 500);
+            // 1. Attempt to open ad in a new tab
+            try {
+                window.open(data.adUrl, '_blank');
+            } catch (e) {
+                console.warn("Ad popup blocked.");
+            }
+
+            // 2. Trigger download in the current tab IMMEDIATELY
+            // This ensures the user gets their file even if the ad link is flagged.
+            window.location.href = data.fileUrl;
         });
     } else {
         document.getElementById('dynamic-title').innerText = "Error: File Not Found";
@@ -102,3 +132,7 @@
         document.getElementById('countdown').style.display = "none";
     }
 </script>
+
+<!-- Social Bar Ads -->
+<script type='text/javascript'
+    src='//pl29434660.profitablecpmratenetwork.com/c1/98/75/c198754349b7a6194e138290aa5675bb.js'></script>
