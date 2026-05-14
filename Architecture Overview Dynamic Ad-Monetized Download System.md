@@ -2,23 +2,42 @@
 
 This document outlines the technical architecture for the "Dynamic Bridge Page" strategy implemented on a restricted platform (GoDaddy Website Builder).
 
-## **1\. High-Level Logic Flow**
+## **1. High-Level Logic Flow**
 
-The system follows a 4-step sequence to ensure monetization before the user receives the final asset.
+The system follows a 3-step sequence to ensure monetization before the user receives the final asset.
 
-1. **Entry Point (Blog):** User visits a content-rich blog post (e.g., Mt. Negron) and clicks a call-to-action link containing a unique identifier (?id=2D1N).  
-2. **The Bridge (GoDaddy Page):** The browser loads a specific "Download" page. While the user waits for a 10s countdown, **Passive Ad Banners** and **Social Bars** are displayed to generate revenue.  
-3. **Monetized Delivery:** Upon countdown completion, the user clicks the download button. To ensure a clean user experience and avoid browser security flags, the file download starts **directly** in the current tab without further redirects.  
-4. **Delivery Layer (Google Drive):** Immediately following the ad trigger, the current tab redirects to a direct-download link hosted on Google Drive.
+1. **Entry Point (Blog):** User visits a content-rich blog post (e.g., Mt. Negron) and clicks a call-to-action link containing a unique identifier (`?id=2D1N`).  
+2. **The Bridge (GitHub Pages):** The browser loads the standalone bridge page hosted on GitHub. While the user waits for a 10s countdown, **Passive Ad Banners** and **Social Bars** are displayed to generate revenue.  
+3. **Direct Delivery (Google Drive):** Upon countdown completion, a "Download Now" button appears. When clicked, it triggers a direct download from Google Drive in a new tab.
 
-## **2\. Infrastructure Components**
+## **2. System Flow Diagram**
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Blog as Blog Post (GoDaddy)
+    participant Bridge as Bridge Page (GitHub Pages)
+    participant Ads as Adsterra (Banners/Social)
+    participant Drive as Google Drive
+
+    User->>Blog: Clicks CTA Link (?id=2D1N)
+    Blog->>Bridge: Redirects to Bridge Page
+    Bridge->>Ads: Load Banners & Social Bar
+    Bridge->>Bridge: Start 10s Countdown
+    Bridge->>User: Display "Download Now" Button
+    User->>Bridge: Clicks Button
+    Bridge->>Drive: Direct File Download
+```
+
 
 | Component | Role | Technology/Service |
 | :---- | :---- | :---- |
-| **Content Host** | Hosts the blog articles and the Bridge UI. | GoDaddy Website Builder |
-| **Logic Engine** | Detects URL parameters and maps them to files. | Vanilla JavaScript (Embedded HTML) |
-| **Monetization** | Provides the revenue-generating redirect. | Adsterra Direct Link |
-| **File Storage** | Hosts the actual PDF/Zip assets. | Google Drive (Public Link) |
+| **Content Host (Blog)** | Hosts the blog articles and traffic source. | GoDaddy Website Builder |
+| **Bridge Host** | Hosts the standalone bridge page to bypass sandboxes. | GitHub Pages |
+| **Logic Engine** | Detects URL parameters and maps them to files. | Vanilla JavaScript |
+| **Monetization** | Provides passive revenue during the countdown. | Adsterra (Banners & Social Bar) |
+| **File Storage** | Hosts the actual PDF/Zip assets. | Google Drive (Direct Link) |
+
 
 ## **3\. Data Flow Architecture**
 
@@ -27,33 +46,34 @@ The "Brain" of the system is the fileDatabase object. This maps short keys to co
 const fileDatabase = {  
     '2D1N': {  
         title: 'Mt. Negron 2D1N - Itinerary',  
-        fileUrl: 'https://drive.google.com/uc?export=download&id=...',  
-        adUrl: 'https://www.profitablecpmratenetwork.com/...'  
+        fileUrl: 'https://drive.google.com/uc?export=download&id=...'
     },
     '3D2N': {  
         title: 'Mt. Negron 3D2N - Itinerary',  
-        fileUrl: 'https://drive.google.com/uc?export=download&id=...',  
-        adUrl: 'https://www.profitablecpmratenetwork.com/...'  
+        fileUrl: 'https://drive.google.com/uc?export=download&id=...'
     }
 }
 
+
 ## **4\. Security & Technical Workarounds**
 
-### **Iframe Bypass Logic**
+### **Bypassing GoDaddy Iframe Restrictions**
 
-Because GoDaddy embeds custom code in an iframe, standard URL detection fails. The architecture uses a "Tiered Detection" strategy:
+GoDaddy's "Custom Code" block is restricted by a strict `sandbox` attribute that blocks direct downloads and certain scripts. The architecture solves this by:
 
-* **Tier 1 (Internal):** Check the iframe's own `window.location.search`.  
-* **Tier 2 (Top-Level):** Attempt to access `window.top.location.search` (the main browser address bar). This is wrapped in a `try-catch` to handle cross-origin security restrictions common in site builders.  
-* **Tier 3 (Referrer):** Fallback to `document.referrer` to extract parameters if the top-level window is inaccessible.
+1. **External Hosting:** Moving the bridge page to GitHub Pages to run as a top-level document.
+2. **Top-Level Navigation:** Using a direct `<a>` tag with `target="_blank"` or direct file URL to ensure the browser handles the download outside of any iframe context.
+3. **URL Parameter Passthrough:** Ensuring the blog CTA link points directly to the GitHub Pages URL with the required `?id=` parameter.
+
 
 ### **Case-Neutral Mapping**
 
 To prevent broken links due to user typing or copy-paste errors, the architecture forces all incoming IDs to **Uppercase** and trims whitespace before comparing them to the database.
 
-## **5\. Visual Data Journey**
+## **5. Visual Data Journey**
 
-User \-\> Blog Link (?id=...) \-\> Bridge Script (+ Passive Banners) \-\> Database Lookup \-\> 10s Timer \-\> Direct G-Drive Download (Current Tab)
+User -> Blog CTA (?id=...) -> GitHub Bridge Page -> 10s Countdown (+ Ads) -> "Download Now" Button -> Google Drive Download
+
 
 ## **6. Error Handling & Edge Cases**
 
