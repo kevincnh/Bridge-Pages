@@ -140,7 +140,7 @@
                 document.getElementById('seconds').innerText = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timer);
-                    document.getElementById('dynamic-title').innerText = "Your File is Ready!";
+                    document.getElementById('dynamic-title').innerText = data.title + " is Ready!";
                     document.getElementById('dynamic-sub').style.display = 'none';
                     document.getElementById('countdown').style.display = 'none';
                     downloadBtn.style.display = 'inline-block';
