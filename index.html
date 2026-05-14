@@ -78,10 +78,10 @@
 
     <div class="container">
         <h2 id="dynamic-title">Verifying Request...</h2>
-        <p id="dynamic-sub">Please wait while we prepare your file.</p>
 
 
         <div id="countdown">
+
             Ready in <span id="seconds">10</span>s...
         </div>
 
@@ -127,7 +127,7 @@
         if (data) {
             document.title = "Download: " + data.title;
             document.getElementById('dynamic-title').innerText = "Preparing your " + data.title + "...";
-            document.getElementById('dynamic-sub').innerText = "Please wait while we prepare your " + data.title + ".";
+
 
             const downloadBtn = document.getElementById('final-trigger');
             downloadBtn.href = data.fileUrl;
@@ -141,16 +141,16 @@
                 if (timeLeft <= 0) {
                     clearInterval(timer);
                     document.getElementById('dynamic-title').innerText = data.title + " is Ready!";
-                    document.getElementById('dynamic-sub').style.display = 'none';
+
                     document.getElementById('countdown').style.display = 'none';
                     downloadBtn.style.display = 'inline-block';
                 }
             }, 1000);
         } else {
-            document.getElementById('dynamic-title').innerText = "Error: Invalid Link";
-            document.getElementById('dynamic-sub').innerText = "We couldn't find the file you're looking for.";
+            document.getElementById('dynamic-title').innerText = "Error: File Not Found";
             document.getElementById('countdown').style.display = "none";
         }
+
 
     </script>
 
