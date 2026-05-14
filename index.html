@@ -78,15 +78,17 @@
 
     <div class="container">
         <h2 id="dynamic-title">Verifying Request...</h2>
-        <p id="dynamic-sub">Please wait while we prepare your itinerary file.</p>
+        <p id="dynamic-sub">Please wait while we prepare your file.</p>
+
 
         <div id="countdown">
             Ready in <span id="seconds">10</span>s...
         </div>
 
         <a id="final-trigger" target="_blank" rel="noopener noreferrer">
-            DOWNLOAD ITINERARY NOW
+            DOWNLOAD NOW
         </a>
+
 
         <div class="ad-container">
             <p class="ad-label">Sponsored Content</p>
@@ -125,9 +127,12 @@
         if (data) {
             document.title = "Download: " + data.title;
             document.getElementById('dynamic-title').innerText = "Preparing your " + data.title + "...";
+            document.getElementById('dynamic-sub').innerText = "Please wait while we prepare your " + data.title + ".";
 
             const downloadBtn = document.getElementById('final-trigger');
             downloadBtn.href = data.fileUrl;
+            downloadBtn.innerText = "DOWNLOAD " + data.title.toUpperCase() + " NOW";
+
 
             let timeLeft = 10;
             const timer = setInterval(() => {
@@ -143,9 +148,10 @@
             }, 1000);
         } else {
             document.getElementById('dynamic-title').innerText = "Error: Invalid Link";
-            document.getElementById('dynamic-sub').innerText = "We couldn't find the itinerary you're looking for.";
+            document.getElementById('dynamic-sub').innerText = "We couldn't find the file you're looking for.";
             document.getElementById('countdown').style.display = "none";
         }
+
     </script>
 
     <!-- Social Bar Ads -->
