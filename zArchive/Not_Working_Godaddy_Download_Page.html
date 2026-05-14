@@ -3,10 +3,12 @@
     <h2 id="dynamic-title">Preparing your download...</h2>
     <p id="dynamic-sub">Your file will be ready after a brief verification.</p>
 
-    <button id="final-trigger"
-        style="background-color: #2ecc71; color: white; padding: 20px 40px; font-size: 18px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; display: none;">
+    <a id="final-trigger" target="_top"
+        style="background-color: #2ecc71; color: white; padding: 20px 40px; font-size: 18px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; display: none; text-decoration: none;">
         CLICK TO DOWNLOAD NOW
-    </button>
+    </a>
+
+
 
     <div id="countdown" style="font-size: 24px; font-weight: bold; color: #e74c3c;">
         Link ready in <span id="seconds">10</span>s...
@@ -42,12 +44,12 @@
         '2D1N': {
             title: 'Mt. Negron 2D1N - Itinerary',
             fileUrl: 'https://drive.google.com/uc?export=download&id=1Z9vBga9B7Biws7mEUwO91TclEpcXLWlN',
-            adUrl: 'https://www.profitablecpmratenetwork.com/mv8hk59q?key=29ab0de8ec6b25d247ba0857470888d5'
+            adUrl: 'https://www.profitablecpmratenetwork.com/w1drxn1ibq?key=96bc180156da24324009d0cdc74f9bd4'
         },
         '3D2N': {
             title: 'Mt. Negron 3D2N - Itinerary',
             fileUrl: 'https://drive.google.com/uc?export=download&id=1AcnXgox3dYsFYwLqhZxK3-lt6WgN3DS9',
-            adUrl: 'https://www.profitablecpmratenetwork.com/mv8hk59q?key=29ab0de8ec6b25d247ba0857470888d5'
+            adUrl: 'https://www.profitablecpmratenetwork.com/w1drxn1ibq?key=96bc180156da24324009d0cdc74f9bd4'
         }
     };
 
@@ -92,6 +94,10 @@
     const data = fileDatabase[fileId];
 
     if (data) {
+        // Set the direct link immediately
+        const downloadBtn = document.getElementById('final-trigger');
+        downloadBtn.href = data.fileUrl;
+
         const fullTitle = "Download: " + data.title;
         document.title = fullTitle; // Update iframe title
         try {
@@ -110,22 +116,27 @@
                 document.getElementById('dynamic-title').innerText = "Your " + data.title + " is Ready!";
                 document.getElementById('dynamic-sub').style.display = 'none'; // Hide verification text
                 document.getElementById('countdown').style.display = 'none';
-                document.getElementById('final-trigger').style.display = 'inline-block';
+
+                // Show the button and handle the Nested Iframe click
+                downloadBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Create the "Breakout" iframe
+                    const ifr = document.createElement('iframe');
+                    ifr.style.display = 'none';
+                    // This is the flag you found online!
+                    ifr.setAttribute('sandbox', 'allow-downloads allow-scripts allow-same-origin');
+                    ifr.src = data.fileUrl;
+                    
+                    document.body.appendChild(ifr);
+                    
+                    // Cleanup after a few seconds
+                    setTimeout(() => ifr.remove(), 5000);
+                });
+
+                downloadBtn.style.display = 'inline-block';
             }
         }, 1000);
-
-        document.getElementById('final-trigger').addEventListener('click', function () {
-            // 1. Attempt to open ad in a new tab
-            try {
-                window.open(data.adUrl, '_blank');
-            } catch (e) {
-                console.warn("Ad popup blocked.");
-            }
-
-            // 2. Trigger download in the current tab IMMEDIATELY
-            // This ensures the user gets their file even if the ad link is flagged.
-            window.location.href = data.fileUrl;
-        });
     } else {
         document.getElementById('dynamic-title').innerText = "Error: File Not Found";
         document.getElementById('dynamic-sub').innerHTML = "We couldn't find a file for ID: <b>" + (fileId || "NONE") + "</b>. <br>Please check your link.";

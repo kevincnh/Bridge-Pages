@@ -7,8 +7,8 @@ This document outlines the technical architecture for the "Dynamic Bridge Page" 
 The system follows a 4-step sequence to ensure monetization before the user receives the final asset.
 
 1. **Entry Point (Blog):** User visits a content-rich blog post (e.g., Mt. Negron) and clicks a call-to-action link containing a unique identifier (?id=2D1N).  
-2. **The Bridge (GoDaddy Page):** The browser loads a specific "Download" page. While the user waits for a 10s countdown, **Passive Ad Banners** are displayed to generate initial revenue.  
-3. **Revenue Layer (Adsterra Direct Link):** Upon countdown completion, the user clicks the download button. This triggers an **Adsterra Direct Link** (opening in a new tab) for secondary, high-conversion revenue.  
+2. **The Bridge (GoDaddy Page):** The browser loads a specific "Download" page. While the user waits for a 10s countdown, **Passive Ad Banners** and **Social Bars** are displayed to generate revenue.  
+3. **Monetized Delivery:** Upon countdown completion, the user clicks the download button. To ensure a clean user experience and avoid browser security flags, the file download starts **directly** in the current tab without further redirects.  
 4. **Delivery Layer (Google Drive):** Immediately following the ad trigger, the current tab redirects to a direct-download link hosted on Google Drive.
 
 ## **2\. Infrastructure Components**
@@ -53,7 +53,7 @@ To prevent broken links due to user typing or copy-paste errors, the architectur
 
 ## **5\. Visual Data Journey**
 
-User \-\> Blog Link (?id=...) \-\> Bridge Script (+ Passive Banners) \-\> Database Lookup \-\> 10s Timer \-\> Adsterra Direct Link (New Tab) \-\> 500ms Delay \-\> G-Drive (Current Tab)
+User \-\> Blog Link (?id=...) \-\> Bridge Script (+ Passive Banners) \-\> Database Lookup \-\> 10s Timer \-\> Direct G-Drive Download (Current Tab)
 
 ## **6. Error Handling & Edge Cases**
 
