@@ -88,5 +88,5 @@ User -> Blog CTA (?id=...) -> GitHub Bridge Page -> 10s Countdown (+ Ads) -> "Do
 
 To add a new downloadable asset:
 1.  Upload the file to Google Drive and generate a direct download link (`uc?export=download&id=...`).
-2.  Add a new entry to the `fileDatabase` object in `Download_Page.html`.
+2.  Add a new entry to the `fileDatabase` object in `index.html`. **IMPORTANT:** Always use ALL-UPPERCASE keys (e.g., `NEGRON-GPX`) to ensure the case-insensitive lookup works correctly.
 3.  Update the blog post CTA link to use the new key (e.g., `?id=NEW_KEY`).
