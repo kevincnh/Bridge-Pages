@@ -2,6 +2,9 @@
 
 This document outlines the technical architecture for the "Dynamic Bridge Page" strategy implemented on a restricted platform (GoDaddy Website Builder).
 
+**Repository:** [kevincnh/Bridge-Pages](https://github.com/kevincnh/Bridge-Pages)
+
+
 ## **1. High-Level Logic Flow**
 
 The system follows a 3-step sequence to ensure monetization before the user receives the final asset.
@@ -33,7 +36,8 @@ sequenceDiagram
 | Component | Role | Technology/Service |
 | :---- | :---- | :---- |
 | **Content Host (Blog)** | Hosts the blog articles and traffic source. | GoDaddy Website Builder |
-| **Bridge Host** | Hosts the standalone bridge page to bypass sandboxes. | GitHub Pages |
+| **Bridge Host** | Hosts the standalone bridge page to bypass sandboxes. | GitHub Pages ([Repo](https://github.com/kevincnh/Bridge-Pages)) |
+
 | **Logic Engine** | Detects URL parameters and maps them to files. | Vanilla JavaScript |
 | **Monetization** | Provides passive revenue during the countdown. | Adsterra (Banners & Social Bar) |
 | **File Storage** | Hosts the actual PDF/Zip assets. | Google Drive (Direct Link) |
